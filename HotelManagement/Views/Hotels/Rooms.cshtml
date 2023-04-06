@@ -1,0 +1,28 @@
+﻿@model List<HotelManagement.Models.HotelRoom>
+
+<h2>Rooms</h2>
+<p>
+    <a asp-action="Index">Home</a> |
+    <a asp-controller="HotelRooms" asp-action="Create">Create New Room</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Room Type</th>
+            <th>Capacity</th>
+            <th>Price Per Night</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var room in Model)
+        {
+            <tr>
+                <td>@room.RoomType</td>
+                <td>@room.Capacity</td>
+                <td>@room.PricePerNight</td>
+                <td>@room.Description</td>
+            </tr>
+        }
+    </tbody>
+</table>
