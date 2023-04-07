@@ -1,48 +1,33 @@
 ﻿using HotelManagement.Data;
+using HotelManagement.Models;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace HotelManagement.Validation
 {
-    public static class Validations
+    public class ValidateModel
     {
-        public static ValidationResult AtLeastOnePersonPerRoom(int? capacity, ValidationContext context)
+        public static ValidationResult UniqueHotelName(string name, ValidationContext validationContext)
         {
-            if (capacity.HasValue && capacity.Value < 1)
+            var dbContext = validationContext.GetService<HotelDbContext>();
+
+            var currentHotel = validationContext.ObjectInstance as Hotel;
+
+            var existingHotel = dbContext.Hotels.FirstOrDefault(h => h.Name == name);
+
+            if (existingHotel != null && (currentHotel == null || existingHotel.Id != currentHotel.Id))
             {
-                return new ValidationResult("A booking must have at least one adult per room.");
+                
+                return new ValidationResult("The hotel name must be unique");
+            }
+            if (existingHotel != null)
+            {
+                dbContext.Entry(existingHotel).State = EntityState.Detached;
             }
 
             return ValidationResult.Success;
         }
 
-        public static ValidationResult RoomMustHaveHotel(int? hotelId, ValidationContext context)
-        {
-            if (hotelId.HasValue && context.GetService(typeof(HotelDbContext)) is HotelDbContext dbContext)
-            {
-                var hotel = dbContext.Hotels.Find(hotelId.Value);
-                if (hotel == null)
-                {
-                    return new ValidationResult("A room can’t exist without a hotel.");
-                }
-            }
-
-            return ValidationResult.Success;
-        }
-
-        public static ValidationResult UniqueHotelName(string name, ValidationContext context)
-        {
-            if (!string.IsNullOrEmpty(name) && context.GetService(typeof(HotelDbContext)) is HotelDbContext dbContext)
-            {
-                var hotel = dbContext.Hotels.FirstOrDefault(h => h.Name == name);
-                if (hotel != null)
-                {
-                    return new ValidationResult("You cannot enter two identical hotel names.");
-                }
-            }
-
-            return ValidationResult.Success;
-        }
-     
 
         public static ValidationResult IsValidPhoneNumber(string phoneNumber, ValidationContext context)
         {
@@ -61,5 +46,6 @@ namespace HotelManagement.Validation
 
             return ValidationResult.Success;
         }
+
     }
 }

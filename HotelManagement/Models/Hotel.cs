@@ -10,7 +10,7 @@ namespace HotelManagement.Models
 
         [Required]
         [StringLength(50)]
-        [CustomValidation(typeof(Validations), "UniqueHotelName", ErrorMessage = "The {0} must be unique")]
+        [CustomValidation(typeof(ValidateModel), "UniqueHotelName", ErrorMessage = "The {0} must be unique")]
         public string Name { get; set; }
 
         [Required]
@@ -26,7 +26,7 @@ namespace HotelManagement.Models
         public string Country { get; set; }
 
         [Required]
-        [CustomValidation(typeof(Validations), "IsValidPhoneNumber", ErrorMessage = "Phone numbers must be numeric but could start with “+”")]
+        [CustomValidation(typeof(ValidateModel), "IsValidPhoneNumber", ErrorMessage = "Phone numbers must be numeric but could start with “+”")]
         public string PhoneNumber { get; set; }
 
         [Required]
@@ -41,6 +41,7 @@ namespace HotelManagement.Models
         public ICollection<HotelRoom> HotelRooms { get; set; }
 
 
+        //Validation Result Counter
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
@@ -51,7 +52,7 @@ namespace HotelManagement.Models
             // Validate using custom validation methods
             if (!string.IsNullOrEmpty(Name))
             {
-                var uniqueNameResult = Validations.UniqueHotelName(Name, validationContext);
+                var uniqueNameResult = ValidateModel.UniqueHotelName(Name, validationContext);
                 if (uniqueNameResult != ValidationResult.Success)
                 {
                     results.Add(uniqueNameResult);
@@ -60,7 +61,7 @@ namespace HotelManagement.Models
 
             if (!string.IsNullOrEmpty(PhoneNumber))
             {
-                var phoneResult = Validations.IsValidPhoneNumber(PhoneNumber, validationContext);
+                var phoneResult = ValidateModel.IsValidPhoneNumber(PhoneNumber, validationContext);
                 if (phoneResult != ValidationResult.Success)
                 {
                     results.Add(phoneResult);
@@ -72,25 +73,5 @@ namespace HotelManagement.Models
                 yield return result;
             }
         }
-    }
-
-
-    public class HotelRoom
-    {
-        public int Id { get; set; }
-        [Required]
-        public int HotelId { get; set; }
-        [Required]
-        [MaxLength(100)]
-        public string RoomType { get; set; }
-
-        [Required(ErrorMessage = "Please enter the number of guests.")]
-        [Range(1, int.MaxValue, ErrorMessage = "Please enter a valid number of guests.")]
-        public int Capacity { get; set; }
-        [Required]
-        public decimal PricePerNight { get; set; }
-        [MaxLength(500)]
-        public string Description { get; set; }
-        public Hotel Hotel { get; set; }
     }
 }

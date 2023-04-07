@@ -37,6 +37,7 @@ namespace HotelManagement.Controllers
             var hotelRoom = await _context.HotelRooms
                 .Include(h => h.Hotel)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (hotelRoom == null)
             {
                 return NotFound();
@@ -78,10 +79,12 @@ namespace HotelManagement.Controllers
             }
 
             var hotelRoom = await _context.HotelRooms.FindAsync(id);
+
             if (hotelRoom == null)
             {
                 return NotFound();
             }
+            
             ViewData["HotelId"] = new SelectList(_context.Hotels, "Id", "Name", hotelRoom.HotelId);
             return View(hotelRoom);
         }
@@ -127,6 +130,7 @@ namespace HotelManagement.Controllers
             var hotelRoom = await _context.HotelRooms
                 .Include(h => h.Hotel)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (hotelRoom == null)
             {
                 return NotFound();
@@ -137,14 +141,15 @@ namespace HotelManagement.Controllers
 
         // POST: HotelRooms/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.HotelRooms == null)
             {
                 return Problem("Entity set 'HotelDbContext.HotelRooms'  is null.");
             }
+
             var hotelRoom = await _context.HotelRooms.FindAsync(id);
+
             if (hotelRoom != null)
             {
                 _context.HotelRooms.Remove(hotelRoom);

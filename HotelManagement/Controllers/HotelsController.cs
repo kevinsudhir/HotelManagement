@@ -13,7 +13,7 @@ namespace HotelManagement.Controllers
     public class HotelsController : Controller
     {
         private readonly HotelDbContext _context;
-        private readonly Hotel _hotel;
+        //private readonly Hotel _hotel;
 
         public HotelsController(HotelDbContext context)
         {
@@ -26,6 +26,7 @@ namespace HotelManagement.Controllers
             var get_hotel = from h in _context.Hotels
                             orderby h.Id
                             select h;
+            
             return get_hotel != null ?
                         View(await get_hotel.ToListAsync()) :
                         Problem("Entity set 'HotelDbContext.Hotels'  is null.");
@@ -41,6 +42,7 @@ namespace HotelManagement.Controllers
 
             var hotel = await _context.Hotels
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (hotel == null)
             {
                 return NotFound();
@@ -81,6 +83,7 @@ namespace HotelManagement.Controllers
             }
 
             var hotel = await _context.Hotels.FindAsync(id);
+
             if (hotel == null)
             {
                 return NotFound();
@@ -134,6 +137,7 @@ namespace HotelManagement.Controllers
 
             var hotel = await _context.Hotels
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (hotel == null)
             {
                 return NotFound();
@@ -143,15 +147,16 @@ namespace HotelManagement.Controllers
         }
 
         // POST: Hotels/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete")]     
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Hotels == null)
             {
                 return Problem("Entity set 'HotelDbContext.Hotels'  is null.");
             }
+
             var hotel = await _context.Hotels.FindAsync(id);
+
             if (hotel != null)
             {
                 _context.Hotels.Remove(hotel);
@@ -172,12 +177,12 @@ namespace HotelManagement.Controllers
             var hotel = await _context.Hotels
                 .Include(h => h.HotelRooms)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (hotel == null)
             {
                 return NotFound();
             }
 
-            
             return View(hotel.HotelRooms.ToList());
         }
 
